@@ -1,14 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zait-err <zait-err@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/20 15:12:36 by zait-err          #+#    #+#             */
-/*   Updated: 2025/03/09 04:21:52 by zait-err         ###   ########.fr       */
+/*   Created: 2025/03/09 04:20:51 by zait-err          #+#    #+#             */
+/*   Updated: 2025/03/09 04:20:55 by zait-err         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minitalk.h"
 
@@ -63,10 +64,10 @@ void	send_bits(int pid, unsigned char octet)
 }
 void	signhandler(int signal)
 {
-	(void)signal;
-	return ;
+	if(signal == SIGUSR1)
+		ft_printf("message wsel");
+	return;
 }
-
 void	send_message(int server_pid, char *message)
 {
 	while (*message)
@@ -95,5 +96,6 @@ int	main(int ac, char **av)
 		exit(1);
 	}
 	signal(SIGUSR2,signhandler);
+	signal(SIGUSR1,signhandler);
 	send_message(server_pid, message);
 }
