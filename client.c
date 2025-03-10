@@ -6,7 +6,7 @@
 /*   By: zait-err <zait-err@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:12:36 by zait-err          #+#    #+#             */
-/*   Updated: 2025/03/09 04:21:52 by zait-err         ###   ########.fr       */
+/*   Updated: 2025/03/10 02:02:34 by zait-err         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,31 +40,25 @@ int	ft_atoi(const char *str)
 
 void	send_bits(int pid, unsigned char octet)
 {
-	int				i;
-	unsigned char	bit;
+	int	i;
+	int	bit;
+	int	shift;
+	int	res;
 
 	i = 7;
 	while (i >= 0)
 	{
-		bit = (octet >> i) & 1;
-		if (bit)
-		{
-			if (kill(pid, SIGUSR1) == -1) //failed while sending the message 
-				exit(1);
-		}
+		shift = 1 << i;
+		bit = octet & shift;
+		if (bit == 0)
+			res = kill(pid, SIGUSR1);
 		else
-		{
-			if (kill(pid, SIGUSR2) == -1)
-				exit(1);
-		}
+			res = kill(pid, SIGUSR2);
+		if (res == -1)
+			exit(1);
+		usleep(700);
 		i--;
-		usleep(20000);
 	}
-}
-void	signhandler(int signal)
-{
-	(void)signal;
-	return ;
 }
 
 void	send_message(int server_pid, char *message)
@@ -94,6 +88,5 @@ int	main(int ac, char **av)
 		ft_printf("Invalid PID\n");
 		exit(1);
 	}
-	signal(SIGUSR2,signhandler);
 	send_message(server_pid, message);
 }

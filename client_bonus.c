@@ -6,10 +6,9 @@
 /*   By: zait-err <zait-err@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 04:20:51 by zait-err          #+#    #+#             */
-/*   Updated: 2025/03/09 04:20:55 by zait-err         ###   ########.fr       */
+/*   Updated: 2025/03/10 03:28:40 by zait-err         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minitalk.h"
 
@@ -41,33 +40,30 @@ int	ft_atoi(const char *str)
 
 void	send_bits(int pid, unsigned char octet)
 {
-	int				i;
-	unsigned char	bit;
+	int	i;
+	int	bit;
+	int	shift;
+	int	res;
 
 	i = 7;
 	while (i >= 0)
 	{
-		bit = (octet >> i) & 1;
-		if (bit)
-		{
-			if (kill(pid, SIGUSR1) == -1) //failed while sending the message 
-				exit(1);
-		}
+		shift = 1 << i;
+		bit = octet & shift;
+		if (bit == 0)
+			res = kill(pid, SIGUSR1);
 		else
+			res = kill(pid, SIGUSR2);
+		if (res == -1)
 		{
-			if (kill(pid, SIGUSR2) == -1)
-				exit(1);
+			ft_printf("Failed while sending the message!\n");
+			exit(1);
 		}
+		usleep(700);
 		i--;
-		usleep(20000);
 	}
 }
-void	signhandler(int signal)
-{
-	if(signal == SIGUSR1)
-		ft_printf("message wsel");
-	return;
-}
+
 void	send_message(int server_pid, char *message)
 {
 	while (*message)
@@ -76,6 +72,12 @@ void	send_message(int server_pid, char *message)
 		message++;
 	}
 	send_bits(server_pid, '\0');
+}
+
+void	check_receive(int sig)
+{
+	if (sig == SIGUSR1)
+		ft_printf("message wsel!\n");
 }
 
 int	main(int ac, char **av)
@@ -88,6 +90,7 @@ int	main(int ac, char **av)
 		write(1, "Usage: ./client <server_pid> <message>\n", 40);
 		return (1);
 	}
+	signal(SIGUSR1, check_receive);
 	server_pid = ft_atoi(av[1]);
 	message = av[2];
 	if (server_pid <= 0 || server_pid > 4194304)
@@ -95,7 +98,5 @@ int	main(int ac, char **av)
 		ft_printf("Invalid PID\n");
 		exit(1);
 	}
-	signal(SIGUSR2,signhandler);
-	signal(SIGUSR1,signhandler);
 	send_message(server_pid, message);
 }
