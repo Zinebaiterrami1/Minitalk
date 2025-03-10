@@ -6,7 +6,7 @@
 /*   By: zait-err <zait-err@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 04:20:51 by zait-err          #+#    #+#             */
-/*   Updated: 2025/03/10 03:28:40 by zait-err         ###   ########.fr       */
+/*   Updated: 2025/03/10 04:04:15 by zait-err         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	send_bits(int pid, unsigned char octet)
 			ft_printf("Failed while sending the message!\n");
 			exit(1);
 		}
-		usleep(700);
+		usleep(20000);
 		i--;
 	}
 }
@@ -91,6 +91,7 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	signal(SIGUSR1, check_receive);
+	signal(SIGUSR2, check_receive);
 	server_pid = ft_atoi(av[1]);
 	message = av[2];
 	if (server_pid <= 0 || server_pid > 4194304)

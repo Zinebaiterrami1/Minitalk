@@ -6,7 +6,7 @@
 /*   By: zait-err <zait-err@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:12:38 by zait-err          #+#    #+#             */
-/*   Updated: 2025/03/10 03:32:31 by zait-err         ###   ########.fr       */
+/*   Updated: 2025/03/10 04:05:47 by zait-err         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	handle_signal(int sig, siginfo_t *info, void *more_info)
 		len = 0;
 		character = 0;
 	}
+	kill(client_pid, SIGUSR2);
 }
 
 int	main(int ac, char **av)

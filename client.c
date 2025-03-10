@@ -6,7 +6,7 @@
 /*   By: zait-err <zait-err@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:12:36 by zait-err          #+#    #+#             */
-/*   Updated: 2025/03/10 02:02:34 by zait-err         ###   ########.fr       */
+/*   Updated: 2025/03/10 04:06:37 by zait-err         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	send_bits(int pid, unsigned char octet)
 			res = kill(pid, SIGUSR2);
 		if (res == -1)
 			exit(1);
-		usleep(700);
+		usleep(20000);
 		i--;
 	}
 }
@@ -71,6 +71,11 @@ void	send_message(int server_pid, char *message)
 	send_bits(server_pid, '\0');
 }
 
+void	check_receive(int sig)
+{
+	(void)sig;
+}
+
 int	main(int ac, char **av)
 {
 	int		server_pid;
@@ -81,6 +86,7 @@ int	main(int ac, char **av)
 		write(1, "Usage: ./client <server_pid> <message>\n", 40);
 		return (1);
 	}
+	signal(SIGUSR2, check_receive);
 	server_pid = ft_atoi(av[1]);
 	message = av[2];
 	if (server_pid <= 0 || server_pid > 4194304)
